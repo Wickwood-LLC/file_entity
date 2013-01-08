@@ -1,5 +1,5 @@
 name = File entity
-description = "Extends Drupal file entities to be fieldable and viewable."
+description = "Extends Drupal file entities to be fieldable and viewable. Patched by WWM."
 package = Media
 core = 7.x
 dependencies[] = field

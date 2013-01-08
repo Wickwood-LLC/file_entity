@@ -58,6 +58,48 @@ function file_entity_add_upload($form, &$form_state, array $options = array()) {
 }
 
 /**
+ * Page callback to show file usage information.
+ */
+function file_entity_usage_page($file) {
+  $rows = array();
+  foreach (file_usage_list($file) as $module => $usage) {
+    $info = system_get_info('module', $module);
+    $item = array(
+      'data' => $info['name'],
+      'children' => array(),
+    );
+    foreach ($usage as $entity_type => $entity_ids) {
+      $entity_info = entity_get_info($entity_type);
+      $entities = entity_load($entity_type, array_keys($entity_ids));
+      foreach ($entity_ids as $entity_id => $count) {
+        $label = entity_label($entity_type, $entities[$entity_id]);
+        $entity_uri = entity_uri($entity_type, $entities[$entity_id]);
+        $uri = $entity_uri['path'];
+        $rows[] = array($entity_type, l($label, $uri), $count);
+      }
+    }
+  }
+  $header[] = array(
+    'data' => t('Type'),
+  );
+  $header[] = array(
+    'data' => t('Title'),
+  );
+  $header[] = array(
+    'data' => t('Count'),
+  );
+  $build['usage_table'] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#caption' => t('This table lists all of the places where @filename is used.',
+    array('@filename' => $file->filename)),
+    '#empty' => t('This file is not currently used.'),
+  );
+  return $build;
+}
+
+/**
  * Upload a file.
  */
 function file_entity_add_upload_submit($form, &$form_state) {
