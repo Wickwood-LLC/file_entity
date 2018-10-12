@@ -750,7 +750,7 @@ function file_entity_edit($form, &$form_state, $file) {
     '#title' => t('Associated with'),
     '#maxlength' => 60,
     '#autocomplete_path' => 'user/autocomplete',
-    '#default_value' => !empty($file->uid) ? user_load($file->uid)->name : '',
+    '#default_value' => (!empty($file->uid) && $user = user_load($file->uid)) ? $user->name : '',
     '#weight' => -1,
     '#description' => t('Leave blank for %anonymous.', array('%anonymous' => variable_get('anonymous', t('Anonymous')))),
   );
