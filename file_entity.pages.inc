@@ -435,6 +435,8 @@ function file_entity_add_upload_submit($form, &$form_state) {
       // Save the file with blanks fields.
       $save = TRUE;
     }
+    // Allow other modules to choose to skip or complete step 4.
+    drupal_alter('file_entity_file_upload_skip_fields', $save, $form_state);
   }
 
   // Form id's can vary depending on how many other forms are displayed, so we
