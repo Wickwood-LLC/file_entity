@@ -1004,9 +1004,10 @@ function file_entity_update_7212(&$sandbox) {
         'value' => serialize((int) $result->{$key}),
       );
     }
-    $sandbox['progress'] += count($results);
     $sandbox['current_fid'] = $result->fid;
   }
+
+  $sandbox['progress'] += count($results);
 
   if (!empty($values)) {
     $query = db_insert('file_metadata');
