@@ -836,6 +836,15 @@ function file_entity_edit_submit($form, &$form_state) {
   // Check if a replacement file has been uploaded.
   if (!empty($form_state['values']['replace_upload'])) {
     $replacement = $form_state['values']['replace_upload'];
+    // Existing image metadata is stored in $file->height and $file->width.
+    // Loop through the replacement metadata and update existing values.
+    if (!empty($replacement->metadata)) {
+      foreach ($replacement->metadata as $metadata_key => $metadata_value) {
+        if (isset($file->{$metadata_key})) {
+          $file->{$metadata_key} = $metadata_value;
+        }
+      }
+    }
     // Move file from temp to permanent home.
     if (!empty($form_state['values']['replace_keep_original_filename'])
     && $form_state['values']['replace_keep_original_filename']) {
