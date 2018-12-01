@@ -1187,7 +1187,7 @@ function file_entity_upload_archive_form_submit($form, &$form_state) {
       $extract_dir = file_default_scheme() . '://' . pathinfo($archive->filename, PATHINFO_FILENAME);
       $extract_dir = file_destination($extract_dir, FILE_EXISTS_RENAME);
       if (!file_prepare_directory($extract_dir, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY)) {
-        throw new Exception(t('Unable to prepar, e directory %dir for extraction.', array('%dir' => $extract_dir)));
+        throw new Exception(t('Unable to prepare directory %dir for extraction.', array('%dir' => $extract_dir)));
       }
 
       $archiver->extract($extract_dir);
