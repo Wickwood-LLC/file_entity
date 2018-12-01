@@ -672,12 +672,15 @@ function file_entity_edit($form, &$form_state, $file) {
   // Add a 'replace this file' upload field if the file is writeable.
   if (file_entity_file_is_writeable($file)) {
     // Set up replacement file validation.
-    $replacement_options = array();
+    $replacement_options = !empty($form_state['#upload_options']) ? $form_state['#upload_options'] : array();
 
     // The replacement file must have an extension valid for the original type.
     $file_extensions = array();
     $file_type_name = isset($file->type) ? $file->type : file_get_type($file);
-    if ($file_type_name && ($file_type = file_type_load($file_type_name))) {
+    if (!empty($replacement_options['file_extensions'])) {
+      $file_extensions = explode(' ', $replacement_options['file_extensions']);
+    }
+    elseif ($file_type_name && ($file_type = file_type_load($file_type_name))) {
       $file_extensions = file_type_get_valid_extensions($file_type);
     }
 
