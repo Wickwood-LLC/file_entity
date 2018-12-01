@@ -282,8 +282,26 @@ function file_entity_usage_page($file) {
         $entity_uri = empty($entities[$entity_id]) ? NULL : entity_uri($entity_type, $entities[$entity_id]);
 
         // Link the label to the URI when possible.
-        if (!empty($entity_uri['path'])) {
+        if (!empty($entity_uri['path']) && $entity_type != 'paragraphs_item') {
           $entity_label = l($label, $entity_uri['path']);
+        }
+        // For paragraphs items, we are searching for usages in nodes.
+        elseif ($entity_type == 'paragraphs_item') {
+          $paragraph_fields = field_read_fields(array('type' => 'paragraphs'));
+          foreach ($paragraph_fields as $paragraph_field) {
+            $field_name = $paragraph_field['field_name'];
+            $query = new EntityFieldQuery();
+            $query->entityCondition('entity_type', 'node')
+              ->fieldCondition($field_name, 'value', $entity_id, '=');
+            $nid = $query->execute();
+            if (!empty($nid)) {
+              $nid = implode(array_keys($nid['node']));
+              if ($nid) {
+                $node = node_load($nid);
+                $entity_label = l($node->title, 'node/' . $nid);
+              }
+            }
+          }
         }
         else {
           $entity_label = check_plain($label);
