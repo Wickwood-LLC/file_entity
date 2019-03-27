@@ -56,6 +56,10 @@ function file_entity_download_page($file) {
     // For local files, transfer the file and do not reveal the actual URL.
     file_transfer($file->uri, $headers);
   }
+  else if (file_uri_scheme($file->uri) == 's3') {
+    $url = file_create_url($file->uri);
+    drupal_goto($url);
+  }
   else {
     // For remote files, just redirect the user to that file's actual URL.
     $headers['Location'] = file_create_url($file->uri);
