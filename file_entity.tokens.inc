@@ -185,7 +185,9 @@ function file_entity_tokens($type, $tokens, array $data = array(), array $option
             }
           }
           else {
-            $replacements[$original] = $return;
+            if (!is_null($return)) {
+              $replacements[$original] = $return;
+            }
           }
         }
 
