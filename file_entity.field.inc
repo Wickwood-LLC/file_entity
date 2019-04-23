@@ -388,6 +388,16 @@ function file_entity_field_formatter_view($entity_type, $entity, $field, $instan
           $file->referencing_entity_type = $entity_type;
           $file->referencing_field = $field['field_name'];
 
+          // Prevent recursion by checking if the referencing entity is itself
+          // do not display it again (return an empty array).
+          // This senario is created a few lines below when file_view is called
+          // it returns an array containing a referncing entity that is itself.
+          // This is likely treating the symptom and not the root cause which is
+          // probably buried in some hook_file_view() setting the referencing
+          // entity.
+          if (!empty($entity->fid) && $entity->fid === $item['fid']) {
+            return $element;
+          }
           // Untranslatable fields are rendered with no language code, fall back
           // to the content language in that case.
           $element[$delta] = file_view($file, $settings['file_view_mode'], $langcode !== LANGUAGE_NONE ? $langcode : NULL);
