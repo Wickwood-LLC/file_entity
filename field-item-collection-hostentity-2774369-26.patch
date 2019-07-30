@@ -1,0 +1,41 @@
+diff --git a/file_entity.pages.inc b/file_entity.pages.inc
+index aa10e94..e26134f 100644
+--- a/file_entity.pages.inc
++++ b/file_entity.pages.inc
+@@ -281,9 +281,20 @@ function file_entity_usage_page($file) {
+           continue;
+         }
+ 
++        $current_type = $entity_type;
++        // Use hostEntity if entity is a field_item_collection or paragraphs_item.
++        // TODO perhaps add a hook for clean discovery of entities that should return their host.
++        if (in_array($entity_type, array('field_collection_item', 'paragraphs_item'))) {
++          $current_entity = $entities[$entity_id]->hostEntity();
++          $current_type = $entities[$entity_id]->hostEntityType();
++          $entity_id = $entities[$entity_id]->hostEntityId();
++        }
++        else {
++          $current_entity = $entities[$entity_id];
++        }
+         // Retrieve the label and the URI of the entity.
+-        $label = empty($entities[$entity_id]) ? $module : entity_label($entity_type, $entities[$entity_id]);
+-        $entity_uri = empty($entities[$entity_id]) ? NULL : entity_uri($entity_type, $entities[$entity_id]);
++        $label = empty($current_entity) ? $module : entity_label($current_type, $current_entity);
++        $entity_uri = empty($current_entity) ? NULL : entity_uri($current_type, $current_entity);
+ 
+         // Link the label to the URI when possible.
+         if (!empty($entity_uri['path']) && $entity_type != 'paragraphs_item') {
+@@ -311,11 +322,11 @@ function file_entity_usage_page($file) {
+           $entity_label = check_plain($label);
+         }
+ 
+-        $rows[] = array($entity_label, $entity_type, $count);
++        $rows[] = array($entity_label, $current_type, $count);
+ 
+         // Record the occurrence of the entity to ensure that it isn't listed in
+         // the table again.
+-        $occured_entities[$entity_type][$entity_id] = count($rows) - 1;
++        $occured_entities[$current_type][$entity_id] = count($rows) - 1;
+       }
+     }
+   }
