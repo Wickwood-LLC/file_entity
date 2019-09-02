@@ -59,6 +59,7 @@ function file_entity_field_formatter_info() {
         'remote_playback' => 'remote_playback',
       ),
       'autoplay' => FALSE,
+      'playsinline' => FALSE,
       'loop' => FALSE,
       'muted' => FALSE,
       'width' => NULL,
@@ -194,6 +195,11 @@ function file_entity_field_formatter_settings_form($field, $instance, $view_mode
       '#type' => 'checkbox',
       '#default_value' => $settings['autoplay'],
     );
+    $element['playsinline'] = array(
+      '#title' => t('Plays inline'),
+      '#type' => 'checkbox',
+      '#default_value' => $settings['playsinline'],
+    );
     $element['loop'] = array(
       '#title' => t('Loop'),
       '#type' => 'checkbox',
@@ -303,6 +309,9 @@ function file_entity_field_formatter_settings_summary($field, $instance, $view_m
     }
     if (isset($settings['autoplay'])) {
       $summary[] = t('Autoplay: %autoplay', array('%autoplay' => $settings['autoplay'] ? t('yes') : t('no')));
+    }
+    if (isset($settings['playsinline'])) {
+      $summary[] = t('Plays inline: %playsinline', array('%playsinline' => $settings['playsinline'] ? t('yes') : t('no')));
     }
     if (isset($settings['loop'])) {
       $summary[] = t('Loop: %loop', array('%loop' => $settings['loop'] ? t('yes') : t('no')));
@@ -498,6 +507,7 @@ function file_entity_field_formatter_view($entity_type, $entity, $field, $instan
           '#controls' => $settings['controls'],
           '#controls_list' => $settings['controls_list'],
           '#autoplay' => $settings['autoplay'],
+          '#playsinline' => $settings['playsinline'],
           '#loop' => $settings['loop'],
           '#muted' => $settings['muted'],
           '#width' => $settings['width'],
