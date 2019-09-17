@@ -360,7 +360,8 @@ function file_entity_field_formatter_view($entity_type, $entity, $field, $instan
           if (variable_get('file_entity_protect_repeated_render', TRUE)) {
             // Protect ourselves from repeated rendering.
             static $repeated_render_depth = array();
-            $repeated_render_id = $entity_type . $field['field_name'] . $item['fid'];
+            list($entity_id) = entity_extract_ids($entity_type, $entity);
+            $repeated_render_id = $entity_type . $entity_id . $field['field_name'] . $item['fid'];
             if (isset($repeated_render_depth[$repeated_render_id])) {
               $repeated_render_depth[$repeated_render_id]++;
             }
