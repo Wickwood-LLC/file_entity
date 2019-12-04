@@ -63,6 +63,12 @@ function file_entity_download_page($file) {
   else {
     // For remote files, just redirect the user to that file's actual URL.
     $headers['Location'] = file_create_url($file->uri);
+    // If using S3 as a replacement for the file system, default headers
+    // for downloading will cause the server to not respond. Remove them.
+    if (module_exists('s3fs')) {
+      unset($headers['Content-Length']);
+      unset($headers['Content-Transfer-Encoding']);
+    }
     foreach ($headers as $name => $value) {
       drupal_add_http_header($name, $value);
     }
