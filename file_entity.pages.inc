@@ -265,7 +265,7 @@ function file_entity_usage_page($file) {
 
   // Determine all of the locations where a file is used, then loop through the
   // occurrences and filter out any duplicates.
-  foreach (file_usage_list($file) as $module => $type) {
+  foreach (file_usage_list($file) as $type) {
     foreach ($type as $entity_type => $entity_ids) {
       // There are cases where the actual entity doesn't exist.
       // We have to handle this.
@@ -277,17 +277,25 @@ function file_entity_usage_page($file) {
         // additional usage to the total count column in the table row and
         // continue on to the next iteration of the loop.
         if (isset($occured_entities[$entity_type][$entity_id])) {
-          $rows[$occured_entities[$entity_type][$entity_id]][2] += $count;
+          $rows[$occured_entities[$entity_type][$entity_id]][3] += $count;
           continue;
         }
 
         // Retrieve the label and the URI of the entity.
-        $label = empty($entities[$entity_id]) ? $module : entity_label($entity_type, $entities[$entity_id]);
+        $label = empty($entities[$entity_id]) ? t('(entity not loaded)') : entity_label($entity_type, $entities[$entity_id]);
+        if (empty($label)) {
+          $label = t('(entity label not loaded)');
+        }
         $entity_uri = empty($entities[$entity_id]) ? NULL : entity_uri($entity_type, $entities[$entity_id]);
 
         // Link the label to the URI when possible.
         if (!empty($entity_uri['path']) && $entity_type != 'paragraphs_item') {
-          $entity_label = l($label, $entity_uri['path']);
+          if (empty($entity_uri['options'])) {
+            $entity_label = l($label, $entity_uri['path']);
+          }
+          else {
+            $entity_label = l($label, $entity_uri['path'], $entity_uri['options']);
+          }
         }
         // For paragraphs items, we are searching for usages in nodes.
         elseif ($entity_type == 'paragraphs_item') {
@@ -311,7 +319,12 @@ function file_entity_usage_page($file) {
           $entity_label = check_plain($label);
         }
 
-        $rows[] = array($entity_label, $entity_type, $count);
+        $rows[] = array(
+          $entity_label,
+          $entity_id,
+          $entity_type,
+          $count,
+        );
 
         // Record the occurrence of the entity to ensure that it isn't listed in
         // the table again.
@@ -320,7 +333,12 @@ function file_entity_usage_page($file) {
     }
   }
 
-  $header = array(t('Entity'), t('Entity type'), t('Use count'));
+  $header = array(
+    t('Entity label'),
+    t('Entity ID'),
+    t('Entity type'),
+    t('Times this file used by this entity'),
+  );
   $build['usage_table'] = array(
     '#theme' => 'table',
     '#header' => $header,
