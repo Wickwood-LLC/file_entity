@@ -1239,14 +1239,14 @@ function file_entity_upload_archive_form_submit($form, &$form_state) {
       $extract_location = 'temporary://' . $destination;
       $extract_location = file_destination($extract_location, FILE_EXISTS_RENAME);
       if (!file_prepare_directory($extract_location, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY)) {
-        throw new Exception(t('Unable to prepar, a temporary directory %dir for extraction.', array('%dir' => $extract_location)));
+        throw new Exception(t('Unable to prepare, a temporary directory %dir for extraction.', array('%dir' => $extract_location)));
       }
 
       // Prepare target directory where files are going to be saved.
       $target_dir = file_default_scheme() . '://' . $destination;
       $target_dir = file_destination($target_dir, FILE_EXISTS_RENAME);
       if (!file_prepare_directory($target_dir, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY)) {
-        throw new Exception(t('Unable to prepar, a directory %dir for extraction.', array('%dir' => $target_dir)));
+        throw new Exception(t('Unable to prepare, a directory %dir for extraction.', array('%dir' => $target_dir)));
       }
 
       $archiver->extract($extract_location);
@@ -1278,7 +1278,7 @@ function file_entity_upload_archive_form_submit($form, &$form_state) {
           // directory hierarchy of the file.
           $destination = pathinfo($file->uri, PATHINFO_DIRNAME);
           if (!file_prepare_directory($destination, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY)) {
-            throw new Exception(t('Unable to prepar, a directory %dir for extraction.', array('%dir' => $destination)));
+            throw new Exception(t('Unable to prepare, a directory %dir for extraction.', array('%dir' => $destination)));
           }
 
           if (!file_unmanaged_move($extracted_file->uri, $file->uri)) {
