@@ -133,6 +133,33 @@ function file_entity_add_upload_step_upload($form, &$form_state, array $options 
     '#default_value' => isset($form_state['storage']['upload']) ? $form_state['storage']['upload'] : NULL,
   );
 
+  $form['upload']['#description'] = t('Files must be less than !size.', array('!size' => '<strong>' . format_size($form['upload']['#upload_validators']['file_entity_validate_size_extensions'][0]) . '</strong>'));
+
+  // Get list of extensions.
+  $extensions = explode("\n", variable_get('file_entity_max_filesize_extensions'));
+
+  if (!empty($extensions)) {
+
+    $limits = '';
+
+    foreach ($extensions as $position => $text) {
+      $matches = array();
+      preg_match('/(.*)\|(.*)/', $text, $matches);
+
+      if (is_array($matches) && count($matches) == 3) {
+        $extension = $matches[1];
+        $filesize = $matches[2];
+
+        $limits .= $extension . ': ' . $filesize . ',';
+      }
+    }
+
+    $limits = rtrim($limits, ',');
+
+    $form['upload']['#description'] = t('Files must be less than !size (!limits).', array('!size' => '<strong>' . format_size($form['upload']['#upload_validators']['file_entity_validate_size_extensions'][0]) . '</strong>', '!limits' => $limits));
+
+  }
+
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['next'] = array(
     '#type' => 'submit',
@@ -142,6 +169,44 @@ function file_entity_add_upload_step_upload($form, &$form_state, array $options 
   form_load_include($form_state, 'inc', 'file_entity', 'file_entity.pages');
 
   return $form;
+}
+
+function file_entity_validate_size_extensions(stdClass $file, $file_limit = 0, $user_limit = 0) {
+  global $user;
+  $errors = array();
+
+  // Current file extension.
+  $current_extension = pathinfo($file->filename, PATHINFO_EXTENSION);
+
+  // Get list of extensions.
+  $extensions = explode("\n", variable_get('file_entity_max_filesize_extensions'));
+
+  if ($extensions) {
+    foreach ($extensions as $position => $text) {
+      $matches = array();
+      preg_match('/(.*)\|(.*)/', $text, $matches);
+
+      if (is_array($matches) && count($matches) == 3) {
+        $extension = $matches[1];
+        $filesize = $matches[2];
+
+        if (strtolower($extension) == strtolower($current_extension)) {
+          $file_limit = parse_size($filesize);
+        }
+      }
+    }
+  }
+
+  if ($file_limit && $file->filesize > $file_limit) {
+    $errors[] = t('The file is %filesize exceeding the maximum file size of %maxsize.', array('%filesize' => format_size($file->filesize), '%maxsize' => format_size($file_limit)));
+  }
+
+  // Save a query by only calling file_space_used() when a limit is provided.
+  if ($user_limit && (file_space_used($user->uid) + $file->filesize) > $user_limit) {
+    $errors[] = t('The file is %filesize which would exceed your disk quota of %quota.', array('%filesize' => format_size($file->filesize), '%quota' => format_size($user_limit)));
+  }
+
+  return $errors;
 }
 
 /**
@@ -1173,7 +1238,7 @@ function file_entity_get_upload_validators(array $options = array()) {
   }
 
   // There is always a file size limit due to the PHP server limit.
-  $validators['file_validate_size'] = array($max_filesize);
+  $validators['file_entity_validate_size_extensions'] = array($max_filesize);
 
   // Add image validators.
   $options += array('min_resolution' => 0, 'max_resolution' => 0);
