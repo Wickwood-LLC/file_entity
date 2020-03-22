@@ -130,7 +130,7 @@ function file_entity_file_update($file) {
  * Returns whether the file has changed
  */
 function file_entity_has_file_changed($file) {
-  return empty($file->is_new) || empty($file->original) || $file->filesize != $file->original->filesize || $file->uri != $file->original->uri;
+  return empty($file->is_new) ? empty($file->original) || $file->filesize != $file->original->filesize || $file->uri != $file->original->uri : FALSE;
 }
 
 
