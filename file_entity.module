@@ -1266,10 +1266,10 @@ function file_entity_file_formatter_file_field_settings($form, &$form_state, $se
  *   Returns the replaced title text.
  */
 function file_entity_replace_title($file, $replace_options = array(), $title = NULL, $langcode = NULL) {
-  $replace_options += [
+  $replace_options += array(
     'clear' => TRUE,
     'sanitize' => FALSE,
-  ];
+  );
 
   $title_default = '[file:field_file_image_title_text]';
   if (!isset($title)) {
@@ -1305,10 +1305,10 @@ function file_entity_replace_title($file, $replace_options = array(), $title = N
  *   Returns the replaced alt text.
  */
 function file_entity_replace_alt($file, $replace_options = array(), $alt = NULL, $langcode = NULL) {
-  $replace_options += [
+  $replace_options += array(
     'clear' => TRUE,
     'sanitize' => FALSE,
-  ];
+  );
 
   $alt_default = '[file:field_file_image_alt_text]';
 
