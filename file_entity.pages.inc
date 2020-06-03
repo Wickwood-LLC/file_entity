@@ -357,6 +357,7 @@ function file_entity_usage_page($file) {
         if (empty($label)) {
           $label = t('(entity label not loaded)');
         }
+        $entity_label = $label;
         $entity_uri = empty($entities[$entity_id]) ? NULL : entity_uri($entity_type, $entities[$entity_id]);
 
         // Link the label to the URI when possible.
