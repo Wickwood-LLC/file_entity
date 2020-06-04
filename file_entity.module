@@ -1282,7 +1282,7 @@ function file_entity_replace_title($file, $replace_options = array(), $title = N
     return $title_items ? $title_items[0]['value'] : '';
   }
   elseif (!empty($title)) {
-    $token_replaced = token_replace($title, ['file' => $file], $replace_options);
+    $token_replaced = token_replace($title, array('file' => $file), $replace_options);
     return decode_entities($token_replaced); // Filter out possible XSS.
   }
 
@@ -1323,7 +1323,7 @@ function file_entity_replace_alt($file, $replace_options = array(), $alt = NULL,
     return $alt_items ? $alt_items[0]['value'] : '';
   }
   elseif (!empty($alt)) {
-    $token_replaced = token_replace($alt, ['file' => $file], $replace_options);
+    $token_replaced = token_replace($alt, array('file' => $file), $replace_options);
     return decode_entities($token_replaced); // Filter out possible XSS.
   }
 
