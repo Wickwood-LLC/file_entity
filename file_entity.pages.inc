@@ -36,9 +36,22 @@ function file_entity_download_page($file) {
     return MENU_NOT_FOUND;
   }
   // @todo Why basename? Why not drupal_basename which was working up until recently.
+  $content_type = '';
+  if (isset($file->filemime)) {
+    $content_type = mime_header_encode($file->filemime);
+    // Strip new lines for php 8.0 compatibility with headers.
+    $content_type = str_replace(array("\n\r", "\n", "\r"), '', $content_type);
+  }
+  $disposition = '';
+  if (isset($file->uri)) {
+    $disposition = mime_header_encode(basename($file->uri));
+    // Strip new lines for php 8.0 compatibility with headers.
+    $disposition = str_replace(array("\n\r", "\n", "\r"), '', $disposition);
+  }
+
   $headers = array(
-    'Content-Type' => mime_header_encode($file->filemime),
-    'Content-Disposition' => 'attachment; filename="' . mime_header_encode(basename($file->uri)) . '"',
+    'Content-Type' => $content_type,
+    'Content-Disposition' => 'attachment; filename="' . $disposition . '"',
     'Content-Length' => $file->filesize,
     'Content-Transfer-Encoding' => 'binary',
     'Pragma' => 'no-cache',
