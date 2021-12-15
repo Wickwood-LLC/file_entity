@@ -1273,12 +1273,9 @@ function file_entity_get_upload_validators(array $options = array()) {
     $validators['file_validate_extensions'] = array(variable_get('file_entity_default_allowed_extensions', 'jpg jpeg gif png txt doc docx xls xlsx pdf ppt pptx pps ppsx odt ods odp mp3 mov mp4 m4a m4v mpeg avi ogg oga ogv weba webp webm'));
   }
 
-  // Cap the upload size according to the system or user defined limit. Note: In
-  // PHP 8 file_upload_max_size() returns a string instead of an integer, so
-  // cast it to an integer to avoid a critical error; do the same for the
-  // variable, just in case.
-  $max_filesize = parse_size(intval(file_upload_max_size()));
-  $file_entity_max_filesize = parse_size(intval(variable_get('file_entity_max_filesize', '')));
+  // Cap the upload size according to the system or user defined limit.
+  $max_filesize = parse_size(file_upload_max_size());
+  $file_entity_max_filesize = parse_size(variable_get('file_entity_max_filesize', ''));
 
   // If the user defined a size limit, use the smaller of the two.
   if (!empty($file_entity_max_filesize)) {
