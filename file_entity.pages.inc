@@ -384,7 +384,7 @@ function file_entity_usage_page($file) {
 
   // Determine all of the locations where a file is used, then loop through the
   // occurrences and filter out any duplicates.
-  foreach (file_usage_list($file) as $type) {
+  foreach (file_usage_list($file) as $module => $type) {
     foreach ($type as $entity_type => $entity_ids) {
       // There are cases where the actual entity doesn't exist.
       // We have to handle this.
@@ -434,6 +434,11 @@ function file_entity_usage_page($file) {
               }
             }
           }
+        }
+        // For file_lock module, display relevant usage information.
+        elseif ($module == 'file_lock') {
+          $entity_label = t('File lock');
+          $entity_id = '--';
         }
         else {
           $entity_label = check_plain($label);
